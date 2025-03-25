@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Set up an environment suitable for chrooting on FreeBSD.
+#
+# http://unix.derkeiler.com/Mailing-Lists/FreeBSD/current/2007-07/msg00597.html
+
+set -eu
+
+ROOT=$(realpath "$1")
+REVISION=$(grep -m 1 REVISION= "$ROOT/sys/conf/newvers.sh" | cut -f2 -d '"')
+BRANCH=$(grep -m 1 BRANCH= "$ROOT/sys/conf/newvers.sh" | cut -f2 -d '"')
+
+: "${UNAME_s=$(uname -s)}}"
+: "${UNAME_m=$(uname -m)}}"
+: "${UNAME_p=$(uname -p)}}"
+
+UNAME_r="$REVISION-$BRANCH"
+UNAME_v="$(uname -v | sed -e "s/$(uname -p)/$UNAME_p/" -e "s/$(uname -r)/$UNAME_r/g")"
+OSVERSION=$(awk '/\#define.*__FreeBSD_version/ { print $3 }' "$ROOT/sys/sys/param.h")
+
+export OSVERSION UNAME_p UNAME_r UNAME_s UNAME_v
+
+test -c "$ROOT/dev/zero" || mount -t devfs none "$ROOT/dev"
+chroot "$@"
