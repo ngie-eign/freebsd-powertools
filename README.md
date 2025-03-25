@@ -1,4 +1,4 @@
-# freebsd-dev-tools
+# freebsd-powertools
 
 SysAdmin and developer tools written specifically for FreeBSD.
 
