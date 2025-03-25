@@ -1,0 +1,25 @@
+# Standard Shell CI workflows for the project.
+
+name: CI (shell)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y shellcheck
+    - name: Running shellcheck
+      run: |
+        find shell/ -exec shellcheck -x {} \;
