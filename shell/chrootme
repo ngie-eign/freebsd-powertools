@@ -3,12 +3,51 @@
 # Set up an environment suitable for chrooting on FreeBSD.
 #
 # http://unix.derkeiler.com/Mailing-Lists/FreeBSD/current/2007-07/msg00597.html
+#
+# usage: chrootme chroot-dir [chroot-args]
+#
+# shellcheck shell=dash
+
+auto_unmount()
+{
+	if [ $# -eq 0 ]; then
+		return 0
+	fi
+
+	echo "Will unmount $MOUNTPOINTS"
+	for mount_dir in $MOUNTPOINTS; do
+		umount "$mount_dir"
+	done
+}
+
+error() {
+	printf "${0##*/}: ERROR: %s\n" "$@"
+}
 
 set -eu
 
-ROOT=$(realpath "$1")
-REVISION=$(grep -m 1 REVISION= "$ROOT/sys/conf/newvers.sh" | cut -f2 -d '"')
-BRANCH=$(grep -m 1 BRANCH= "$ROOT/sys/conf/newvers.sh" | cut -f2 -d '"')
+ROOT=$(realpath "$1"); shift
+: "${SRCDIR="$PWD"}"
+
+DEV_DIR="$ROOT/dev"
+MOUNTPOINTS=""
+SRCDIR_IN_ROOT="$ROOT/usr/src"
+SYS_PARAM_H="$SRCDIR_IN_ROOT/sys/sys/param.h"
+
+trap 'auto_unmount $MOUNTPOINTS' INT EXIT TERM
+if [ ! -r "$SYS_PARAM_H" ]; then
+	mount -t nullfs "$SRCDIR" "$SRCDIR_IN_ROOT"
+	MOUNTPOINTS="$MOUNTPOINTS $SRCDIR_IN_ROOT"
+fi
+if [ ! -c "$DEV_DIR/zero" ]; then
+	mount -t devfs none "$DEV_DIR"
+	MOUNTPOINTS="$MOUNTPOINTS $DEV_DIR"
+fi
+
+NEWVERS_SH="$SRCDIR/sys/conf/newvers.sh"
+
+REVISION="$(grep -m 1 REVISION= "$NEWVERS_SH" | cut -f2 -d '"')"
+BRANCH="$(grep -m 1 BRANCH= "$NEWVERS_SH" | cut -f2 -d '"')"
 
 : "${UNAME_s=$(uname -s)}}"
 : "${UNAME_m=$(uname -m)}}"
@@ -16,9 +55,9 @@ BRANCH=$(grep -m 1 BRANCH= "$ROOT/sys/conf/newvers.sh" | cut -f2 -d '"')
 
 UNAME_r="$REVISION-$BRANCH"
 UNAME_v="$(uname -v | sed -e "s/$(uname -p)/$UNAME_p/" -e "s/$(uname -r)/$UNAME_r/g")"
-OSVERSION=$(awk '/\#define.*__FreeBSD_version/ { print $3 }' "$ROOT/sys/sys/param.h")
+OSVERSION=$(awk '/\#define.*__FreeBSD_version/ { print $3 }' "$SYS_PARAM_H")
 
 export OSVERSION UNAME_p UNAME_r UNAME_s UNAME_v
 
-test -c "$ROOT/dev/zero" || mount -t devfs none "$ROOT/dev"
-chroot "$@"
+install -m 0644 /etc/resolv.conf "$ROOT/etc/resolv.conf"
+chroot "$ROOT" "$@"
