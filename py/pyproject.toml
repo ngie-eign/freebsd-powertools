@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=65", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "freebsd-powertools"
+version = "0.0.1"
+dependencies = [
+  "Jinja2~=3.1.0"
+]
+requires-python = ">=3.11"
+authors = [
+  { name = "Enji Cooper", email = "yaneurabeya@gmail.com" }
+]
+maintainers = [
+  { name = "Enji Cooper", email = "yaneurabeya@gmail.com" }
+]
+description = "SysAdmin and developer tools written specifically for FreeBSD."
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["macos"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13"
+]
+
+[project.scripts]
+gmake-to-json = "freebsd_powertools.gmake_to_json.__main__:main"
+openssl-target-json-to-world-mk = "freebsd_powertools.openssl_target_json_to_world_mk.__main__:main"
+
+[project.urls]
+Repository = "https://github.com/ngie-eign/freebsd-powertools"
+Issues = "https://github.com/ngie-eign/freebsd-powertools/issues"
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.run]
+branch = true
+source = ["src/"]
+
+[tool.pytest.ini_options]
+timeout = 10
+
+[tool.setuptools]
+package-dir = {"" = "src/"}
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+min_version = 4.0
+env_list =
+    coverage
+    py311
+    py312
+    py313
+
+[testenv]
+deps =
+    pytest
+    pytest-timeout
+commands =
+    {envpython} -m pytest {posargs:-v tests}
+
+[testenv:coverage]
+deps =
+    coverage
+    pytest
+    pytest-cov
+    pytest-timeout
+commands =
+    {envpython} -m pytest --cov=freebsd_powertools --cov-fail-under=80 --cov-report=html --cov-report=term \
+        {posargs:-vvvv tests}
+
+[testenv:type]
+deps =
+    mypy
+commands =
+    {envpython} -m mypy {posargs:src}
+"""
