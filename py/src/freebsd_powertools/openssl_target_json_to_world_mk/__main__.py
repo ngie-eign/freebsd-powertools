@@ -15,7 +15,7 @@ from jinja2.nativetypes import NativeEnvironment
 INCS_EXTS = (".h", ".hh", ".hpp" )
 SRCS_EXTS = (".c", ".cc", ".cpp", ".l", ".y" )
 
-SKIP_EXTS = (".asn1", ".conf", ".in", ".inc", ".num", ".pl", ".pm" )
+SKIP_EXTS = (".asn1", ".conf", ".in", ".inc", ".num", ".pl", ".pm", ".s", ".so", ".S", )
 SKIP_NAMES = ("build.info", "config", "Configure" )
 
 
