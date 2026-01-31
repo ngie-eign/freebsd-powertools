@@ -18,7 +18,7 @@ maintainers = [
 description = "SysAdmin and developer tools written specifically for FreeBSD."
 readme = "README.md"
 license = {file = "LICENSE"}
-keywords = ["macos"]
+keywords = ["freebsd"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
