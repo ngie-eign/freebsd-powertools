@@ -1,0 +1,21 @@
+ident "MAC"
+include "GENERIC"
+
+# Loaded as a kernel module [today].
+#device asmc
+
+# For DRM support.
+device	iicbus
+
+# Bluetooth.
+options	NETGRAPH
+options	NETGRAPH_BLUETOOTH
+options	NETGRAPH_BLUETOOTH_BT3C
+options	NETGRAPH_BLUETOOTH_H4
+options	NETGRAPH_BLUETOOTH_HCI
+options	NETGRAPH_BLUETOOTH_L2CAP
+options	NETGRAPH_BLUETOOTH_SOCKET
+options	NETGRAPH_BLUETOOTH_UBT
+options	NETGRAPH_BLUETOOTH_UBTBCMFW
+options	NETGRAPH_ETHER
+options	NETGRAPH_NAT
