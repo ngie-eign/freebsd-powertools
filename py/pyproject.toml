@@ -28,6 +28,7 @@ classifiers = [
 ]
 
 [project.scripts]
+get-package-dependencies = "freebsd_powertools.get_pkg_dependencies.__main__:main"
 gmake-to-json = "freebsd_powertools.gmake_to_json.__main__:main"
 openssl-target-json-to-world-mk = "freebsd_powertools.openssl_target_json_to_world_mk.__main__:main"
 
