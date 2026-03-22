@@ -1,4 +1,4 @@
-"""freebsd_powertools: common logging code."""
+"""Common logging code."""
 # SPDX-License-Identifier: BSD-2-Clause
 
 from __future__ import annotations
@@ -6,9 +6,8 @@ from __future__ import annotations
 import logging
 from functools import cache
 
-
 DEFAULT_FORMATTER: logging.Formatter = logging.Formatter(
-    "%(name)s: %(levelname)s: %(message)s"
+    "%(name)s: %(levelname)s: %(message)s",
 )
 DEFAULT_HANDLER: logging.Handler = logging.StreamHandler()
 
@@ -19,7 +18,7 @@ def get_logger(
     formatter: logging.Formatter = DEFAULT_FORMATTER,
     handlers: list[logging.Handlers] | None = None,
     level: int | str = logging.DEBUG,
-):
+) -> logging.Logger:
     """Get a logger.
 
     This function returns a logger setup in a structured manner, with the provided
@@ -29,8 +28,8 @@ def get_logger(
     function is called more than once with the same `name`.
 
     NOTE: the `handlers` will be modified. If you need to use different handlers
-    across different loggers configured with the same `name`, pass in copies
-    instead of the originals.
+    across different loggers configured with the same `name`, pass in copies of the
+    handlers instead of the original handlers themselves.
 
     Args:
         name: logger name.
@@ -41,6 +40,7 @@ def get_logger(
 
     Returns:
         A fully configured `logging.Logger` object.
+
     """
     handlers = handlers or [DEFAULT_HANDLER]
 
